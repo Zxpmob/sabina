@@ -61,6 +61,8 @@ ul{margin:0;}
 
 @keyframes fadeInUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 #app.fade-in{animation:fadeInUp .4s ease;}
+@keyframes skeletonLoading{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface-2) 37%,var(--surface) 63%);background-size:400% 100%;animation:skeletonLoading 1.3s ease infinite;border-radius:14px;}
 
 .divider{width:100%;height:20px;background-image:radial-gradient(circle at 50% -6px, transparent 9px, var(--maroon) 10px, transparent 11px);background-size:26px 20px;background-repeat:repeat-x;opacity:.5;margin:10px 0;}
 
@@ -90,12 +92,30 @@ h1,h2,h3{margin:0 0 8px;font-weight:800;}
 .hero .logo-mark-big{width:104px;height:104px;margin:0 auto 20px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.4));}
 .hero h1{font-size:46px;margin-bottom:4px;background:linear-gradient(90deg,var(--cream),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 .hero .en{letter-spacing:8px;color:var(--gold);font-size:13px;text-transform:uppercase;font-weight:700;margin-bottom:20px;}
-.hero p{max-width:520px;margin:0 auto 28px;color:var(--muted);font-size:15px;}
+.hero p{max-width:520px;margin:0 auto 22px;color:var(--muted);font-size:15px;}
 .btn-primary{display:inline-block;background:var(--maroon);color:#fff;padding:14px 32px;border-radius:13px;font-weight:700;font-size:15px;box-shadow:var(--shadow);transition:.2s;}
 .btn-primary:hover{background:var(--maroon-light);transform:translateY(-2px);}
 .btn-primary:disabled{opacity:.6;transform:none;cursor:default;}
 .btn-ghost{display:inline-block;background:transparent;color:var(--cream);padding:12px 26px;border-radius:12px;border:1px solid var(--line);font-weight:600;font-size:14px;}
 .btn-ghost:hover{border-color:var(--maroon-light);}
+
+/* ---------- Event slider ---------- */
+.event-slider{position:relative;max-width:620px;margin:0 auto 26px;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--surface);}
+.event-slide{display:none;text-align:right;}
+.event-slide.active{display:block;animation:fadeInUp .35s ease;}
+.event-slide .ev-img-wrap{aspect-ratio:21/9;background:var(--surface-2);overflow:hidden;}
+.event-slide .ev-img-wrap img{width:100%;height:100%;object-fit:cover;}
+.event-slide .ev-img-wrap.placeholder{display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);background:linear-gradient(135deg,var(--surface-2),var(--bg-soft));}
+.event-slide .ev-body{padding:14px 20px 16px;}
+.event-slide .ev-body h4{margin:0 0 6px;font-size:15.5px;color:var(--gold);}
+.event-slide .ev-body p{margin:0;font-size:12.5px;color:var(--muted);}
+.event-nav{position:absolute;top:38%;width:30px;height:30px;border-radius:50%;background:rgba(34,31,35,.72);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;z-index:2;}
+.event-nav:hover{background:var(--maroon);}
+.event-nav.prev{right:10px;}
+.event-nav.next{left:10px;}
+.event-dots{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:2;}
+.event-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:.2s;}
+.event-dots span.active{background:var(--gold);width:16px;border-radius:4px;}
 
 /* ---------- Featured strip ---------- */
 .featured-strip{display:flex;gap:16px;overflow-x:auto;padding:30px 4px 14px;scroll-snap-type:x mandatory;}
@@ -134,7 +154,7 @@ h1,h2,h3{margin:0 0 8px;font-weight:800;}
 .cat-card::after{content:"";position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--maroon),var(--gold));}
 .cat-card .icon-bg{position:absolute;font-size:74px;opacity:.05;left:-6px;bottom:-16px;}
 
-/* ---------- Category chips (sticky nav within a category page) ---------- */
+/* ---------- Category chips ---------- */
 .cat-chips{display:flex;gap:8px;overflow-x:auto;padding:16px 2px 8px;}
 .cat-chips::-webkit-scrollbar{height:5px;}
 .cat-chips a{flex:none;padding:8px 15px;border-radius:99px;border:1px solid var(--line);font-size:12.5px;color:var(--muted);white-space:nowrap;transition:.2s;}
@@ -165,7 +185,9 @@ h1,h2,h3{margin:0 0 8px;font-weight:800;}
 .stepper span{min-width:16px;text-align:center;font-weight:700;font-size:13.5px;}
 .empty-note{color:var(--muted);text-align:center;padding:44px 10px;font-size:14px;}
 .loading-note{color:var(--muted);text-align:center;padding:60px 10px;font-size:14px;}
-.error-banner{background:#3a2027;border:1px solid var(--maroon);color:#f1c4cd;padding:14px 16px;border-radius:12px;font-size:13.5px;margin:16px 0;}
+.error-banner{background:#3a2027;border:1px solid var(--maroon);color:#f1c4cd;padding:16px 18px;border-radius:14px;font-size:13.5px;margin:16px 0;display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
+.retry-btn{background:var(--maroon);color:#fff;border-radius:9px;padding:8px 18px;font-size:12.5px;font-weight:700;}
+.retry-btn:hover{background:var(--maroon-light);}
 
 /* ---------- Cart drawer ---------- */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:60;opacity:0;pointer-events:none;transition:.25s;}
@@ -200,6 +222,8 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 18px 26px;t
 .field input,.field select,.field textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--cream);padding:11px 13px;font-family:inherit;font-size:14px;outline:none;transition:.2s;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--maroon-light);}
 .field textarea{resize:vertical;min-height:70px;}
+.field.checkbox{display:flex;align-items:center;gap:8px;flex-direction:row-reverse;justify-content:flex-end;}
+.field.checkbox input{width:auto;}
 .error-msg{color:#e07a8d;font-size:13px;margin-top:8px;min-height:16px;}
 .ok-msg{color:#7fc797;font-size:13px;margin-top:8px;min-height:16px;}
 
@@ -235,6 +259,9 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 18px 26px;t
 .mi-actions button{background:var(--surface-2);color:var(--cream);border-radius:8px;padding:5px 10px;font-size:11.5px;}
 .mi-actions button.del{color:#e07a8d;}
 .mi-actions button:hover{background:var(--maroon);color:#fff;}
+.status-pill{font-size:10.5px;padding:2px 8px;border-radius:99px;background:var(--surface-2);color:var(--muted);}
+.status-pill.on{background:#274a33;color:#8fd8a7;}
+.status-pill.off{background:#4a2730;color:#e0a3ae;}
 
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--maroon);color:#fff;padding:12px 22px;border-radius:12px;font-size:13.5px;box-shadow:var(--shadow);z-index:80;opacity:0;transition:.25s;pointer-events:none;max-width:88vw;text-align:center;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -269,7 +296,7 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 18px 26px;t
 
 <footer>
   <div class="footer-social">
-    <a href="#" aria-label="اینستاگرام صابینا" title="اینستاگرام">
+    <a href="https://www.instagram.com/sabina__city?igsh=dGtva2s1ZWlmYm5x" target="_blank" rel="noopener" aria-label="اینستاگرام صابینا" title="اینستاگرام">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
     </a>
     <a href="#" aria-label="تلگرام صابینا" title="تلگرام">
@@ -314,21 +341,63 @@ const LOGO_SVG = `
 </svg>`;
 document.getElementById('logoSlotTop').innerHTML = LOGO_SVG;
 
-/* ============ Data cache ============ */
-let CATS = [];
-let ITEMS = [];
+/* ==========================================================
+   لایه‌ی شبکه: هر درخواست حداکثر ۷ ثانیه صبر می‌کند و در صورت
+   خطا، ۱ بار دیگر تلاش می‌کند. این باعث می‌شود در اتصال‌های کند
+   یا ناپایدار، سایت به‌جای هنگ‌کردن طولانی، سریع خطا/نتیجه بدهد.
+   ========================================================== */
+function withTimeout(promise, ms){
+  return new Promise((resolve,reject)=>{
+    const t = setTimeout(()=>reject(new Error('timeout')), ms);
+    promise.then(v=>{clearTimeout(t); resolve(v);}, e=>{clearTimeout(t); reject(e);});
+  });
+}
+async function sbCall(factory, {retries=1, timeoutMs=7000}={}){
+  let lastErr;
+  for(let i=0;i<=retries;i++){
+    try{ return await withTimeout(factory(), timeoutMs); }
+    catch(e){ lastErr = e; if(i<retries) await new Promise(r=>setTimeout(r, 400)); }
+  }
+  return {data:null, error:{message: (lastErr&&lastErr.message)||'ارتباط برقرار نشد'}};
+}
+
+/* ============ Data cache (with session storage for instant repeat loads) ============ */
+let CATS = [], ITEMS = [], EVENTS = [];
 let DATA_LOADED = false;
+const CACHE_KEY = 'sabina_cache_v1';
+const CACHE_TTL = 10*60*1000; // ۱۰ دقیقه
+
+function hydrateFromCache(){
+  try{
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    if(!raw) return false;
+    const c = JSON.parse(raw);
+    if(!c || (Date.now()-c.ts) > CACHE_TTL) return false;
+    CATS = c.cats||[]; ITEMS = c.items||[]; EVENTS = c.events||[];
+    DATA_LOADED = true;
+    return true;
+  }catch(e){ return false; }
+}
+function saveCache(){
+  try{ sessionStorage.setItem(CACHE_KEY, JSON.stringify({cats:CATS, items:ITEMS, events:EVENTS, ts:Date.now()})); }catch(e){}
+}
 
 async function loadData(force){
-  if(DATA_LOADED && !force) return;
-  const [{data:cats, error:catErr}, {data:items, error:itemErr}] = await Promise.all([
-    sb.from('categories').select('*').order('sort_order'),
-    sb.from('items').select('*').order('created_at', {ascending:false})
+  if(DATA_LOADED && !force) return {ok:true};
+  const [catsRes, itemsRes, eventsRes] = await Promise.all([
+    sbCall(()=>sb.from('categories').select('*').order('sort_order')),
+    sbCall(()=>sb.from('items').select('*').order('created_at', {ascending:false})),
+    sbCall(()=>sb.from('events').select('*').order('created_at', {ascending:false}))
   ]);
-  if(!catErr) CATS = cats || [];
-  if(!itemErr) ITEMS = items || [];
-  DATA_LOADED = !catErr && !itemErr;
-  return {catErr, itemErr};
+  if(catsRes.error || itemsRes.error){
+    return {ok:false, error: (catsRes.error||itemsRes.error).message};
+  }
+  CATS = catsRes.data || [];
+  ITEMS = itemsRes.data || [];
+  EVENTS = eventsRes.error ? [] : (eventsRes.data || []); // اگر جدول رویدادها هنوز ساخته نشده، نادیده بگیر
+  DATA_LOADED = true;
+  saveCache();
+  return {ok:true};
 }
 const catName = slug => (CATS.find(c=>c.slug===slug)||{}).name || slug;
 const catIcon = slug => (CATS.find(c=>c.slug===slug)||{}).icon || '☕';
@@ -396,7 +465,6 @@ function removeFromCart(itemId){
 }
 function clearCart(){ CartDB.save([]); }
 
-/* qty stepper on item cards, refreshed without a full page re-render */
 function qtyControlHTML(item){
   const cart = CartDB.get();
   const row = cart.find(r=>String(r.id)===String(item.id));
@@ -416,22 +484,64 @@ function refreshQtyZones(){
   });
 }
 
-/* ============ Visit tracking ============ */
-async function trackVisit(){
+/* ============ Visit tracking (non-blocking, silent on failure) ============ */
+function trackVisit(){
   if(sessionStorage.getItem('sabina_session_counted')) return;
-  try{
-    await sb.from('visits').insert({session_id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))});
-    sessionStorage.setItem('sabina_session_counted','1');
-  }catch(e){ /* silent */ }
+  sbCall(()=>sb.from('visits').insert({session_id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()))}), {retries:0, timeoutMs:6000})
+    .then(()=>{ sessionStorage.setItem('sabina_session_counted','1'); })
+    .catch(()=>{});
 }
 async function getStats(){
   const dayAgo = new Date(Date.now() - 24*60*60*1000).toISOString();
-  const [{count:total}, {count:last24}] = await Promise.all([
-    sb.from('visits').select('*', {count:'exact', head:true}),
-    sb.from('visits').select('*', {count:'exact', head:true}).gte('visited_at', dayAgo)
+  const [totalRes, last24Res] = await Promise.all([
+    sbCall(()=>sb.from('visits').select('*', {count:'exact', head:true})),
+    sbCall(()=>sb.from('visits').select('*', {count:'exact', head:true}).gte('visited_at', dayAgo))
   ]);
-  return {total: total||0, last24: last24||0};
+  return {total: totalRes.count||0, last24: last24Res.count||0, error: totalRes.error||last24Res.error};
 }
+
+/* ============ Event slider ============ */
+let eventSliderTimer = null;
+let eventSliderIndex = 0;
+function renderEventSlider(events){
+  const active = (events||[]).filter(e=>e.active !== false);
+  if(!active.length) return '';
+  return `
+  <div class="event-slider" id="eventSlider">
+    ${active.map((ev,i)=>`
+      <div class="event-slide ${i===0?'active':''}" data-idx="${i}">
+        <div class="ev-img-wrap ${ev.image_url?'':'placeholder'}">
+          ${ev.image_url?`<img src="${esc(ev.image_url)}" alt="${esc(ev.title)}">`:'🎉'}
+        </div>
+        <div class="ev-body">
+          <h4>${esc(ev.title)}</h4>
+          ${ev.description?`<p>${esc(ev.description)}</p>`:''}
+        </div>
+      </div>`).join('')}
+    ${active.length>1?`
+      <button class="event-nav prev" data-action="event-prev">›</button>
+      <button class="event-nav next" data-action="event-next">‹</button>
+      <div class="event-dots">${active.map((_,i)=>`<span class="${i===0?'active':''}" data-action="event-dot" data-idx="${i}"></span>`).join('')}</div>
+    `:''}
+  </div>`;
+}
+function showEventSlide(idx){
+  const wrap = document.getElementById('eventSlider');
+  if(!wrap) return;
+  const slides = wrap.querySelectorAll('.event-slide');
+  const dots = wrap.querySelectorAll('.event-dots span');
+  if(!slides.length) return;
+  eventSliderIndex = (idx + slides.length) % slides.length;
+  slides.forEach((s,i)=>s.classList.toggle('active', i===eventSliderIndex));
+  dots.forEach((d,i)=>d.classList.toggle('active', i===eventSliderIndex));
+}
+function startEventAutoplay(){
+  stopEventAutoplay();
+  const wrap = document.getElementById('eventSlider');
+  if(!wrap || wrap.querySelectorAll('.event-slide').length<2) return;
+  eventSliderTimer = setInterval(()=>showEventSlide(eventSliderIndex+1), 4500);
+}
+function stopEventAutoplay(){ if(eventSliderTimer){ clearInterval(eventSliderTimer); eventSliderTimer=null; } }
 
 /* ============ Customer views ============ */
 function itemCardHTML(it){
@@ -451,10 +561,17 @@ function itemCardHTML(it){
     </div>`;
 }
 
+function retryBannerHTML(msg){
+  return `<div class="error-banner">
+    <span>${esc(msg||'اتصال به دیتابیس برقرار نشد.')}</span>
+    <button class="retry-btn" data-action="retry-route">تلاش دوباره</button>
+  </div>`;
+}
+
 async function viewHome(){
-  const {catErr, itemErr} = await loadData();
-  if(catErr || itemErr){
-    return `<div class="section"><div class="error-banner">اتصال به دیتابیس برقرار نشد. تنظیمات Supabase (SUPABASE_URL / SUPABASE_ANON_KEY) را در ابتدای فایل بررسی کنید.</div></div>`;
+  const res = await loadData();
+  if(!res.ok){
+    return `<div class="section">${retryBannerHTML('اتصال به دیتابیس برقرار نشد. تنظیمات Supabase را در ابتدای فایل بررسی کنید، یا دوباره تلاش کنید.')}</div>`;
   }
   const featured = ITEMS.filter(i=>i.category_slug==='special').slice(0,6);
   return `
@@ -464,6 +581,7 @@ async function viewHome(){
       <h1>کافه صابینا</h1>
       <div class="en">SABINA CAFE</div>
       <p>گوشه‌ای آرام برای یک فنجان قهوه‌ی خوب، گفت‌وگوهای بی‌عجله و لحظه‌های ساده‌ی دلچسب.</p>
+      ${renderEventSlider(EVENTS)}
       <a href="#/menu" class="btn-primary">مشاهده منو</a>
       ${featured.length ? `
       <div class="featured-strip">
@@ -516,8 +634,8 @@ async function viewHome(){
 }
 
 async function viewCategories(){
-  const {catErr, itemErr} = await loadData();
-  if(catErr || itemErr) return `<div class="section"><div class="error-banner">اتصال به دیتابیس برقرار نشد.</div></div>`;
+  const res = await loadData();
+  if(!res.ok) return `<div class="section">${retryBannerHTML()}</div>`;
   return `
   <div class="section">
     <div class="eyebrow">منوی صابینا</div>
@@ -536,8 +654,8 @@ async function viewCategories(){
 }
 
 async function viewCategoryItems(slug){
-  const {catErr, itemErr} = await loadData();
-  if(catErr || itemErr) return `<div class="section"><div class="error-banner">اتصال به دیتابیس برقرار نشد.</div></div>`;
+  const res = await loadData();
+  if(!res.ok) return `<div class="section">${retryBannerHTML()}</div>`;
   const items = ITEMS.filter(i=>i.category_slug===slug);
   return `
   <div class="section">
@@ -553,8 +671,10 @@ async function viewCategoryItems(slug){
 
 /* ============ Admin ============ */
 async function checkAdmin(){
-  const {data} = await sb.auth.getSession();
-  return !!(data && data.session);
+  try{
+    const {data} = await withTimeout(sb.auth.getSession(), 6000);
+    return !!(data && data.session);
+  }catch(e){ return false; }
 }
 
 function viewAdminEntry(){
@@ -574,15 +694,15 @@ async function adminLogin(){
   const btn = document.querySelector('[data-action="admin-login"]');
   const val = document.getElementById('adminPassInput').value;
   btn.disabled = true; btn.textContent = 'در حال ورود...';
-  const {error} = await sb.auth.signInWithPassword({email: ADMIN_EMAIL, password: val});
+  const {error} = await sbCall(()=>sb.auth.signInWithPassword({email: ADMIN_EMAIL, password: val}), {retries:0, timeoutMs:8000});
   btn.disabled = false; btn.textContent = 'ورود';
   if(!error){ location.hash = '#/admin/dashboard'; }
-  else{ document.getElementById('adminLoginError').textContent = 'رمز عبور اشتباه است.'; }
+  else{ document.getElementById('adminLoginError').textContent = 'رمز عبور اشتباه است یا اتصال برقرار نشد.'; }
 }
 async function adminLogout(){ await sb.auth.signOut(); location.hash = '#/admin'; }
 
 function adminTabs(active){
-  const tabs = [['dashboard','آمار بازدید'],['add','افزودن آیتم'],['manage','مدیریت منو'],['settings','تنظیمات']];
+  const tabs = [['dashboard','آمار بازدید'],['add','افزودن آیتم'],['manage','مدیریت منو'],['events','رویدادها'],['settings','تنظیمات']];
   return `<div class="admin-tabs">
     ${tabs.map(([k,l])=>`<a href="#/admin/${k}" class="${active===k?'active':''}">${l}</a>`).join('')}
     <button class="logout-btn" style="margin-inline-start:auto;" data-action="admin-logout">خروج</button>
@@ -592,6 +712,9 @@ function adminTabs(active){
 async function viewAdminDashboard(){
   const s = await getStats();
   await loadData(true);
+  if(s.error){
+    return `<div class="admin-shell"><div class="eyebrow">پنل مدیریت صابینا</div><h2>آمار بازدید</h2>${adminTabs('dashboard')}${retryBannerHTML('دریافت آمار با خطا مواجه شد.')}</div>`;
+  }
   return `
   <div class="admin-shell">
     <div class="eyebrow">پنل مدیریت صابینا</div>
@@ -685,6 +808,74 @@ async function viewAdminManage(){
   </div>`;
 }
 
+/* ---------- Admin: events ---------- */
+async function viewAdminEvents(editId){
+  await loadData(true);
+  const editing = editId ? EVENTS.find(e=>String(e.id)===String(editId)) : null;
+  const list = EVENTS;
+  return `
+  <div class="admin-shell">
+    <div class="eyebrow">پنل مدیریت صابینا</div>
+    <h2>رویدادها</h2>
+    ${adminTabs('events')}
+    <p class="muted" style="font-size:13px;">این رویدادها به‌صورت یک اسلایدر بالای دکمه «مشاهده منو» در صفحه اصلی نشان داده می‌شوند. اگر رویداد فعالی نباشد، آن فضا اصلاً نمایش داده نمی‌شود.</p>
+
+    <div class="admin-card">
+      <h3 style="font-size:15px;">${editing?'ویرایش رویداد':'افزودن رویداد جدید'}</h3>
+      <form id="eventForm">
+        <input type="hidden" id="e-id" value="${editing?editing.id:''}">
+        <div class="form-grid">
+          <div class="field full">
+            <label>عنوان رویداد</label>
+            <input type="text" id="e-title" required value="${editing?esc(editing.title):''}">
+          </div>
+          <div class="field full">
+            <label>توضیح کوتاه (اختیاری)</label>
+            <textarea id="e-desc">${editing?esc(editing.description||''):''}</textarea>
+          </div>
+          <div class="field">
+            <label>عکس رویداد</label>
+            <div class="img-upload" id="evImgBox">
+              <img id="evImgPreview" src="${editing&&editing.image_url?esc(editing.image_url):''}" style="${editing&&editing.image_url?'':'display:none;'}">
+              <div class="hint" id="evImgHint">${editing&&editing.image_url?'برای تغییر عکس کلیک کنید':'برای انتخاب عکس کلیک کنید'}</div>
+              <input type="file" id="e-image" accept="image/*" style="display:none;">
+            </div>
+          </div>
+          <div class="field checkbox">
+            <input type="checkbox" id="e-active" ${(!editing || editing.active!==false)?'checked':''}>
+            <label style="margin:0;" for="e-active">رویداد فعال باشد (در سایت نمایش داده شود)</label>
+          </div>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button type="submit" class="btn-primary">${editing?'ذخیره تغییرات':'افزودن رویداد'}</button>
+          ${editing?`<a href="#/admin/events" class="btn-ghost">انصراف</a>`:''}
+          <span class="error-msg" id="eventFormError" style="margin:0;"></span>
+        </div>
+      </form>
+    </div>
+
+    ${list.length ? `
+    <div class="manage-cat">
+      <h3>رویدادهای ثبت‌شده <span class="muted" style="font-size:12px;">(${list.length})</span></h3>
+      <div class="manage-grid">
+        ${list.map(ev=>`
+          <div class="manage-item">
+            ${ev.image_url?`<img class="thumb" src="${esc(ev.image_url)}">`:`<div class="thumb placeholder">🎉</div>`}
+            <div class="mi-info">
+              <b>${esc(ev.title)}</b>
+              <span class="status-pill ${ev.active!==false?'on':'off'}">${ev.active!==false?'فعال':'غیرفعال'}</span>
+            </div>
+            <div class="mi-actions">
+              <button data-action="toggle-event" data-id="${ev.id}" data-active="${ev.active!==false}">${ev.active!==false?'غیرفعال کن':'فعال کن'}</button>
+              <button data-action="edit-event" data-id="${ev.id}">ویرایش</button>
+              <button class="del" data-action="delete-event" data-id="${ev.id}">حذف</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : `<p class="empty-note" style="margin-top:20px;">هنوز رویدادی ثبت نشده است.</p>`}
+  </div>`;
+}
+
 function viewAdminSettings(){
   return `
   <div class="admin-shell">
@@ -724,33 +915,38 @@ function fileToResizedBlob(file, maxW=700){
     reader.readAsDataURL(file);
   });
 }
-async function uploadImage(blob){
-  const path = `items/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
-  const {error} = await sb.storage.from('menu-images').upload(path, blob, {contentType:'image/jpeg', upsert:false});
+async function uploadImage(blob, folder){
+  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;
+  const {error} = await sbCall(()=>sb.storage.from('menu-images').upload(path, blob, {contentType:'image/jpeg', upsert:false}), {retries:0, timeoutMs:15000});
   if(error) return null;
   const {data} = sb.storage.from('menu-images').getPublicUrl(path);
   return data ? data.publicUrl : null;
 }
 
-function bindItemForm(){
-  const form = document.getElementById('itemForm');
-  if(!form) return;
-  const box = document.getElementById('imgUploadBox');
-  const fileInput = document.getElementById('f-image');
-  const preview = document.getElementById('imgPreview');
-  const hint = document.getElementById('imgHint');
-  const existingImage = preview.getAttribute('src') || '';
-  let selectedFile = null;
-
+function bindImageBox(boxId, fileId, previewId, hintId, onSelect){
+  const box = document.getElementById(boxId);
+  const fileInput = document.getElementById(fileId);
+  const preview = document.getElementById(previewId);
+  const hint = document.getElementById(hintId);
+  if(!box) return;
   box.addEventListener('click', ()=>fileInput.click());
   fileInput.addEventListener('change', ()=>{
     const file = fileInput.files[0];
     if(!file) return;
-    selectedFile = file;
+    onSelect(file);
     preview.src = URL.createObjectURL(file);
     preview.style.display = 'block';
     hint.textContent = 'برای تغییر عکس کلیک کنید';
   });
+}
+
+function bindItemForm(){
+  const form = document.getElementById('itemForm');
+  if(!form) return;
+  const preview = document.getElementById('imgPreview');
+  const existingImage = preview.getAttribute('src') || '';
+  let selectedFile = null;
+  bindImageBox('imgUploadBox','f-image','imgPreview','imgHint', file=>{selectedFile=file;});
 
   form.addEventListener('submit', async e=>{
     e.preventDefault();
@@ -765,7 +961,7 @@ function bindItemForm(){
     let imageUrl = existingImage;
     if(selectedFile){
       const blob = await fileToResizedBlob(selectedFile);
-      const uploaded = await uploadImage(blob);
+      const uploaded = await uploadImage(blob, 'items');
       if(uploaded) imageUrl = uploaded;
     }
 
@@ -779,13 +975,58 @@ function bindItemForm(){
 
     let error;
     if(id){
-      ({error} = await sb.from('items').update(payload).eq('id', id));
+      ({error} = await sbCall(()=>sb.from('items').update(payload).eq('id', id), {retries:0, timeoutMs:10000}));
     } else {
-      ({error} = await sb.from('items').insert(payload));
+      ({error} = await sbCall(()=>sb.from('items').insert(payload), {retries:0, timeoutMs:10000}));
     }
 
     btn.disabled = false; btn.textContent = oldTxt;
     if(!error){ toast('ذخیره شد ✓'); location.hash = '#/admin/manage'; }
+    else{ errEl.textContent = 'خطا در ذخیره‌سازی: ' + error.message; }
+  });
+}
+
+function bindEventForm(){
+  const form = document.getElementById('eventForm');
+  if(!form) return;
+  const preview = document.getElementById('evImgPreview');
+  const existingImage = preview.getAttribute('src') || '';
+  let selectedFile = null;
+  bindImageBox('evImgBox','e-image','evImgPreview','evImgHint', file=>{selectedFile=file;});
+
+  form.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const errEl = document.getElementById('eventFormError');
+    errEl.textContent = '';
+    const id = document.getElementById('e-id').value;
+    const title = document.getElementById('e-title').value.trim();
+    if(!title){ errEl.textContent = 'عنوان رویداد را وارد کنید'; return; }
+    const btn = form.querySelector('button[type=submit]');
+    btn.disabled = true; const oldTxt = btn.textContent; btn.textContent = 'در حال ذخیره...';
+
+    let imageUrl = existingImage;
+    if(selectedFile){
+      const blob = await fileToResizedBlob(selectedFile);
+      const uploaded = await uploadImage(blob, 'events');
+      if(uploaded) imageUrl = uploaded;
+    }
+
+    const payload = {
+      title,
+      description: document.getElementById('e-desc').value.trim(),
+      image_url: imageUrl || null,
+      active: document.getElementById('e-active').checked
+    };
+
+    let error;
+    if(id){
+      ({error} = await sbCall(()=>sb.from('events').update(payload).eq('id', id), {retries:0, timeoutMs:10000}));
+    } else {
+      ({error} = await sbCall(()=>sb.from('events').insert(payload), {retries:0, timeoutMs:10000}));
+    }
+
+    btn.disabled = false; btn.textContent = oldTxt;
+    if(!error){ toast('ذخیره شد ✓'); location.hash = '#/admin/events'; }
     else{ errEl.textContent = 'خطا در ذخیره‌سازی: ' + error.message; }
   });
 }
@@ -801,10 +1042,10 @@ function bindPassForm(){
     const next = document.getElementById('p-new').value;
     if(next.length < 6){ msg.textContent = 'رمز جدید باید حداقل ۶ کاراکتر باشد'; return; }
 
-    const {error: reErr} = await sb.auth.signInWithPassword({email: ADMIN_EMAIL, password: current});
+    const {error: reErr} = await sbCall(()=>sb.auth.signInWithPassword({email: ADMIN_EMAIL, password: current}), {retries:0, timeoutMs:8000});
     if(reErr){ msg.textContent = 'رمز فعلی اشتباه است'; return; }
 
-    const {error} = await sb.auth.updateUser({password: next});
+    const {error} = await sbCall(()=>sb.auth.updateUser({password: next}), {retries:0, timeoutMs:8000});
     if(!error){ msg.className = 'ok-msg'; msg.textContent = 'رمز عبور با موفقیت تغییر کرد.'; form.reset(); }
     else{ msg.textContent = 'خطا در تغییر رمز: ' + error.message; }
   });
@@ -812,17 +1053,21 @@ function bindPassForm(){
 
 /* ============ Router ============ */
 async function route(){
+  stopEventAutoplay();
   const hash = location.hash || '#/';
   const parts = hash.replace('#/','').split('/').filter(Boolean);
   const app = document.getElementById('app');
   document.querySelectorAll('#navLinks a').forEach(a=>a.classList.remove('active'));
   app.classList.remove('fade-in');
-  app.innerHTML = `<p class="loading-note">در حال بارگذاری...</p>`;
+
+  if(!DATA_LOADED) hydrateFromCache();
+  if(!DATA_LOADED) app.innerHTML = `<p class="loading-note">در حال بارگذاری...</p>`;
 
   try{
     if(parts.length===0){
       app.innerHTML = await viewHome();
       document.querySelector('#navLinks a[href="#/"]')?.classList.add('active');
+      startEventAutoplay();
     }else if(parts[0]==='menu' && !parts[1]){
       app.innerHTML = await viewCategories();
       document.querySelector('#navLinks a[href="#/menu"]')?.classList.add('active');
@@ -845,15 +1090,24 @@ async function route(){
     }else if(parts[0]==='admin' && parts[1]==='manage'){
       if(!(await checkAdmin())){ location.hash = '#/admin'; return; }
       app.innerHTML = await viewAdminManage();
+    }else if(parts[0]==='admin' && parts[1]==='events' && parts[2]==='edit' && parts[3]){
+      if(!(await checkAdmin())){ location.hash = '#/admin'; return; }
+      app.innerHTML = await viewAdminEvents(parts[3]);
+      bindEventForm();
+    }else if(parts[0]==='admin' && parts[1]==='events'){
+      if(!(await checkAdmin())){ location.hash = '#/admin'; return; }
+      app.innerHTML = await viewAdminEvents();
+      bindEventForm();
     }else if(parts[0]==='admin' && parts[1]==='settings'){
       if(!(await checkAdmin())){ location.hash = '#/admin'; return; }
       app.innerHTML = viewAdminSettings();
       bindPassForm();
     }else{
       app.innerHTML = await viewHome();
+      startEventAutoplay();
     }
   }catch(err){
-    app.innerHTML = `<div class="error-banner">خطای غیرمنتظره رخ داد. لطفاً صفحه را رفرش کنید.</div>`;
+    app.innerHTML = retryBannerHTML('خطای غیرمنتظره رخ داد.');
   }
 
   void app.offsetWidth;
@@ -875,9 +1129,27 @@ document.body.addEventListener('click', async e=>{
   else if(action==='admin-login') adminLogin();
   else if(action==='admin-logout') adminLogout();
   else if(action==='edit-item') location.hash = '#/admin/edit/'+id;
+  else if(action==='retry-route'){ DATA_LOADED=false; route(); }
+  else if(action==='event-prev'){ stopEventAutoplay(); showEventSlide(eventSliderIndex-1); startEventAutoplay(); }
+  else if(action==='event-next'){ stopEventAutoplay(); showEventSlide(eventSliderIndex+1); startEventAutoplay(); }
+  else if(action==='event-dot'){ stopEventAutoplay(); showEventSlide(Number(t.dataset.idx)); startEventAutoplay(); }
+  else if(action==='edit-event') location.hash = '#/admin/events/edit/'+id;
+  else if(action==='toggle-event'){
+    const current = t.dataset.active === 'true';
+    const {error} = await sbCall(()=>sb.from('events').update({active: !current}).eq('id', id), {retries:0, timeoutMs:8000});
+    if(!error){ toast(!current?'رویداد فعال شد':'رویداد غیرفعال شد'); route(); }
+    else{ toast('خطا: ' + error.message); }
+  }
+  else if(action==='delete-event'){
+    if(confirm('این رویداد حذف شود؟')){
+      const {error} = await sbCall(()=>sb.from('events').delete().eq('id', id), {retries:0, timeoutMs:8000});
+      if(!error){ toast('رویداد حذف شد'); route(); }
+      else{ toast('خطا در حذف: ' + error.message); }
+    }
+  }
   else if(action==='delete-item'){
     if(confirm('این آیتم حذف شود؟')){
-      const {error} = await sb.from('items').delete().eq('id', id);
+      const {error} = await sbCall(()=>sb.from('items').delete().eq('id', id), {retries:0, timeoutMs:8000});
       if(!error){ toast('آیتم حذف شد'); route(); }
       else{ toast('خطا در حذف: ' + error.message); }
     }
@@ -892,7 +1164,9 @@ document.addEventListener('keydown', e=>{
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', ()=>{
   trackVisit();
+  hydrateFromCache();
   route();
+  loadData(true); // در پس‌زمینه، داده‌ی تازه را هم بگیر و کش را به‌روزرسانی کن
 });
 </script>
 </body>
