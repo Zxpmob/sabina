@@ -38,10 +38,14 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://usyxvbnkgtkxwzrflggs.supabase.co">
+<link rel="dns-prefetch" href="https://usyxvbnkgtkxwzrflggs.supabase.co">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<!-- Supabase client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Supabase client (deferred so it never blocks the first paint) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
 <style>
 :root{
@@ -318,7 +322,7 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 18px 26px;t
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script defer>
 /* ==========================================================
    تنظیمات Supabase — این دو مقدار را با اطلاعات پروژه خودتان
    جایگزین کنید (Supabase → Project Settings → API)
@@ -361,25 +365,39 @@ async function sbCall(factory, {retries=1, timeoutMs=7000}={}){
   return {data:null, error:{message: (lastErr&&lastErr.message)||'ارتباط برقرار نشد'}};
 }
 
-/* ============ Data cache (with session storage for instant repeat loads) ============ */
-let CATS = [], ITEMS = [], EVENTS = [];
+/* ============ Data cache (localStorage so pages render instantly, even on a brand-new tab) ============ */
+/* دسته‌بندی‌ها تقریباً هیچ‌وقت عوض نمی‌شوند، پس همین‌جا از قبل می‌شناسیمشان تا
+   صفحه اصلی و لیست دسته‌بندی‌ها، بدون هیچ انتظاری برای شبکه، فوری رندر شوند.
+   عدد آیتم‌ها و محتوای واقعی، به‌محض آماده‌شدن، در پس‌زمینه جایگزین می‌شود. */
+const DEFAULT_CATS = [
+  {slug:'special',  name:'نوشیدنی‌های ویژه', icon:'⭐'},
+  {slug:'cold',     name:'نوشیدنی‌های سرد',  icon:'🧊'},
+  {slug:'hot',      name:'نوشیدنی‌های گرم',  icon:'☕'},
+  {slug:'icetea',   name:'ایس‌تی',           icon:'🍹'},
+  {slug:'tea',      name:'چای',              icon:'🍵'},
+  {slug:'mocktail', name:'ماکتیل',           icon:'🍸'},
+  {slug:'shake',    name:'شیک',              icon:'🥤'},
+  {slug:'dessert',  name:'دسر',              icon:'🍰'}
+];
+let CATS = DEFAULT_CATS.slice(), ITEMS = [], EVENTS = [];
 let DATA_LOADED = false;
-const CACHE_KEY = 'sabina_cache_v1';
-const CACHE_TTL = 10*60*1000; // ۱۰ دقیقه
+const CACHE_KEY = 'sabina_cache_v2';
+const CACHE_TTL = 30*60*1000; // ۳۰ دقیقه — فقط برای تازه‌نگه‌داشتن کش؛ در پس‌زمینه همیشه رفرش می‌شود
 
 function hydrateFromCache(){
   try{
-    const raw = sessionStorage.getItem(CACHE_KEY);
+    const raw = localStorage.getItem(CACHE_KEY);
     if(!raw) return false;
     const c = JSON.parse(raw);
     if(!c || (Date.now()-c.ts) > CACHE_TTL) return false;
-    CATS = c.cats||[]; ITEMS = c.items||[]; EVENTS = c.events||[];
+    CATS = (c.cats && c.cats.length) ? c.cats : DEFAULT_CATS.slice();
+    ITEMS = c.items||[]; EVENTS = c.events||[];
     DATA_LOADED = true;
     return true;
   }catch(e){ return false; }
 }
 function saveCache(){
-  try{ sessionStorage.setItem(CACHE_KEY, JSON.stringify({cats:CATS, items:ITEMS, events:EVENTS, ts:Date.now()})); }catch(e){}
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify({cats:CATS, items:ITEMS, events:EVENTS, ts:Date.now()})); }catch(e){}
 }
 
 async function loadData(force){
@@ -568,12 +586,40 @@ function retryBannerHTML(msg){
   </div>`;
 }
 
-async function viewHome(){
-  const res = await loadData();
-  if(!res.ok){
-    return `<div class="section">${retryBannerHTML('اتصال به دیتابیس برقرار نشد. تنظیمات Supabase را در ابتدای فایل بررسی کنید، یا دوباره تلاش کنید.')}</div>`;
-  }
+/* بخش عدد آیتم‌های هر دسته — قبل از رسیدن داده واقعی، سه‌نقطه نشان می‌دهد */
+function countLabel(slug){ return DATA_LOADED ? (catCount(slug)+' آیتم') : '…'; }
+function catGridHTML(){
+  return CATS.map(c=>`
+    <a class="cat-card" href="#/menu/${c.slug}">
+      <span class="icon-bg">${c.icon}</span>
+      <span class="icon">${c.icon}</span>
+      <h3>${c.name}</h3>
+      <span class="count" data-cat-count="${c.slug}">${countLabel(c.slug)}</span>
+    </a>`).join('');
+}
+function featuredStripHTML(){
   const featured = ITEMS.filter(i=>i.category_slug==='special').slice(0,6);
+  if(!featured.length) return '';
+  return `
+  <div class="featured-strip">
+    ${featured.map(it=>`
+      <a class="featured-card" href="#/menu/special">
+        <div class="fc-img-wrap ${it.image_url?'':'placeholder'}">
+          ${it.image_url?`<img src="${esc(it.image_url)}" alt="${esc(it.name)}" loading="lazy">`:'⭐'}
+          <span class="fc-badge">ویژه</span>
+        </div>
+        <div class="fc-body">
+          <h4>${esc(it.name)}</h4>
+          <div class="fc-price">${fmt(it.price)} تومان</div>
+        </div>
+      </a>`).join('')}
+  </div>`;
+}
+
+/* رندر فوری و همگام — هیچ‌وقت منتظر شبکه نمی‌ماند. دسته‌بندی‌ها از قبل
+   شناخته‌شده‌اند؛ اگر کش موجود باشد همه‌چیز واقعی نشان داده می‌شود، وگرنه
+   با «…» شروع می‌کند و به‌محض رسیدن داده، در پس‌زمینه جایگزین می‌شود. */
+function viewHome(){
   return `
   <div class="hero">
     <div class="hero-inner">
@@ -581,22 +627,9 @@ async function viewHome(){
       <h1>کافه صابینا</h1>
       <div class="en">SABINA CAFE</div>
       <p>گوشه‌ای آرام برای یک فنجان قهوه‌ی خوب، گفت‌وگوهای بی‌عجله و لحظه‌های ساده‌ی دلچسب.</p>
-      ${renderEventSlider(EVENTS)}
+      <div id="eventSlot">${renderEventSlider(EVENTS)}</div>
       <a href="#/menu" class="btn-primary">مشاهده منو</a>
-      ${featured.length ? `
-      <div class="featured-strip">
-        ${featured.map(it=>`
-          <a class="featured-card" href="#/menu/special">
-            <div class="fc-img-wrap ${it.image_url?'':'placeholder'}">
-              ${it.image_url?`<img src="${esc(it.image_url)}" alt="${esc(it.name)}" loading="lazy">`:'⭐'}
-              <span class="fc-badge">ویژه</span>
-            </div>
-            <div class="fc-body">
-              <h4>${esc(it.name)}</h4>
-              <div class="fc-price">${fmt(it.price)} تومان</div>
-            </div>
-          </a>`).join('')}
-      </div>` : ''}
+      <div id="featuredSlot">${featuredStripHTML()}</div>
     </div>
   </div>
 
@@ -621,42 +654,70 @@ async function viewHome(){
 
   <div class="section" style="text-align:center;">
     <div class="eyebrow">دسته‌بندی منو</div>
-    <div class="cat-grid">
-      ${CATS.map(c=>`
-        <a class="cat-card" href="#/menu/${c.slug}">
-          <span class="icon-bg">${c.icon}</span>
-          <span class="icon">${c.icon}</span>
-          <h3>${c.name}</h3>
-          <span class="count">${catCount(c.slug)} آیتم</span>
-        </a>`).join('')}
-    </div>
+    <div class="cat-grid">${catGridHTML()}</div>
   </div>`;
 }
 
-async function viewCategories(){
-  const res = await loadData();
-  if(!res.ok) return `<div class="section">${retryBannerHTML()}</div>`;
+function viewCategories(){
   return `
   <div class="section">
     <div class="eyebrow">منوی صابینا</div>
     <h2>دسته‌بندی‌ها</h2>
     <p class="muted">یک دسته را انتخاب کنید تا نوشیدنی‌ها و دسرهای آن را ببینید.</p>
-    <div class="cat-grid">
-      ${CATS.map(c=>`
-        <a class="cat-card" href="#/menu/${c.slug}">
-          <span class="icon-bg">${c.icon}</span>
-          <span class="icon">${c.icon}</span>
-          <h3>${c.name}</h3>
-          <span class="count">${catCount(c.slug)} آیتم</span>
-        </a>`).join('')}
-    </div>
+    <div class="cat-grid">${catGridHTML()}</div>
   </div>`;
 }
 
-async function viewCategoryItems(slug){
-  const res = await loadData();
-  if(!res.ok) return `<div class="section">${retryBannerHTML()}</div>`;
+/* بعد از رسیدن داده‌ی تازه در پس‌زمینه، فقط بخش‌های وابسته به دیتابیس را
+   (بدون رندر مجدد کل صفحه) به‌روزرسانی می‌کند — اگر کاربر در همان صفحه
+   نباشد، این تابع چیزی پیدا نمی‌کند و بی‌خطر رد می‌شود. */
+function patchDynamicZones(){
+  document.querySelectorAll('[data-cat-count]').forEach(el=>{
+    el.textContent = countLabel(el.dataset.catCount);
+  });
+  const fSlot = document.getElementById('featuredSlot');
+  if(fSlot) fSlot.innerHTML = featuredStripHTML();
+  const eSlot = document.getElementById('eventSlot');
+  if(eSlot){ eSlot.innerHTML = renderEventSlider(EVENTS); startEventAutoplay(); }
+  const ciSlot = document.getElementById('categoryItemsSlot');
+  if(ciSlot) ciSlot.innerHTML = categoryItemsInnerHTML(ciSlot.dataset.slug);
+}
+function injectGlobalRetryBanner(msg){
+  const app = document.getElementById('app');
+  if(!app || document.getElementById('globalRetryBanner')) return;
+  const div = document.createElement('div');
+  div.id = 'globalRetryBanner';
+  div.innerHTML = retryBannerHTML(msg);
+  app.prepend(div);
+}
+/* یک‌بار در پس‌زمینه داده‌ی واقعی را می‌گیرد و هر بخش وابسته به دیتابیس
+   که همین الان روی صفحه است را، بدون رفرش کامل، به‌روزرسانی می‌کند. */
+async function afterInitialLoad(){
+  const res = await loadData(true);
+  if(res.ok){ patchDynamicZones(); }
+  else{ injectGlobalRetryBanner('اتصال به دیتابیس برقرار نشد. اطلاعات ممکن است ناقص باشد.'); }
+  return res;
+}
+
+function skeletonItemCardHTML(){
+  return `<div class="item-card">
+    <div class="item-img-wrap skeleton" style="aspect-ratio:4/3;"></div>
+    <div class="item-body">
+      <div class="skeleton" style="height:15px;width:65%;border-radius:6px;"></div>
+      <div class="skeleton" style="height:11px;width:88%;border-radius:6px;margin-top:8px;"></div>
+      <div class="item-foot"><div class="skeleton" style="height:30px;width:92px;border-radius:9px;"></div></div>
+    </div>
+  </div>`;
+}
+function categoryItemsInnerHTML(slug){
+  if(!DATA_LOADED){
+    return `<div class="item-grid">${Array.from({length:6}).map(skeletonItemCardHTML).join('')}</div>`;
+  }
   const items = ITEMS.filter(i=>i.category_slug===slug);
+  return items.length ? `<div class="item-grid">${items.map(itemCardHTML).join('')}</div>`
+    : `<p class="empty-note">فعلاً آیتمی در این دسته ثبت نشده است.</p>`;
+}
+function viewCategoryItems(slug){
   return `
   <div class="section">
     <a href="#/menu" class="back-link">→ بازگشت به دسته‌بندی‌ها</a>
@@ -664,8 +725,7 @@ async function viewCategoryItems(slug){
     <div class="cat-chips">
       ${CATS.map(c=>`<a href="#/menu/${c.slug}" class="${c.slug===slug?'active':''}">${c.icon} ${c.name}</a>`).join('')}
     </div>
-    ${items.length ? `<div class="item-grid">${items.map(itemCardHTML).join('')}</div>`
-      : `<p class="empty-note">فعلاً آیتمی در این دسته ثبت نشده است.</p>`}
+    <div id="categoryItemsSlot" data-slug="${slug}">${categoryItemsInnerHTML(slug)}</div>
   </div>`;
 }
 
@@ -1061,18 +1121,18 @@ async function route(){
   app.classList.remove('fade-in');
 
   if(!DATA_LOADED) hydrateFromCache();
-  if(!DATA_LOADED) app.innerHTML = `<p class="loading-note">در حال بارگذاری...</p>`;
+  if(parts[0]==='admin') app.innerHTML = `<p class="loading-note">در حال بارگذاری...</p>`;
 
   try{
     if(parts.length===0){
-      app.innerHTML = await viewHome();
+      app.innerHTML = viewHome();
       document.querySelector('#navLinks a[href="#/"]')?.classList.add('active');
       startEventAutoplay();
     }else if(parts[0]==='menu' && !parts[1]){
-      app.innerHTML = await viewCategories();
+      app.innerHTML = viewCategories();
       document.querySelector('#navLinks a[href="#/menu"]')?.classList.add('active');
     }else if(parts[0]==='menu' && parts[1]){
-      app.innerHTML = await viewCategoryItems(parts[1]);
+      app.innerHTML = viewCategoryItems(parts[1]);
     }else if(parts[0]==='admin' && !parts[1]){
       if(await checkAdmin()){ location.hash = '#/admin/dashboard'; return; }
       app.innerHTML = viewAdminEntry();
@@ -1103,7 +1163,7 @@ async function route(){
       app.innerHTML = viewAdminSettings();
       bindPassForm();
     }else{
-      app.innerHTML = await viewHome();
+      app.innerHTML = viewHome();
       startEventAutoplay();
     }
   }catch(err){
@@ -1129,7 +1189,7 @@ document.body.addEventListener('click', async e=>{
   else if(action==='admin-login') adminLogin();
   else if(action==='admin-logout') adminLogout();
   else if(action==='edit-item') location.hash = '#/admin/edit/'+id;
-  else if(action==='retry-route'){ DATA_LOADED=false; route(); }
+  else if(action==='retry-route'){ DATA_LOADED=false; route(); afterInitialLoad(); }
   else if(action==='event-prev'){ stopEventAutoplay(); showEventSlide(eventSliderIndex-1); startEventAutoplay(); }
   else if(action==='event-next'){ stopEventAutoplay(); showEventSlide(eventSliderIndex+1); startEventAutoplay(); }
   else if(action==='event-dot'){ stopEventAutoplay(); showEventSlide(Number(t.dataset.idx)); startEventAutoplay(); }
@@ -1163,10 +1223,10 @@ document.addEventListener('keydown', e=>{
 /* ============ Init ============ */
 window.addEventListener('hashchange', route);
 window.addEventListener('DOMContentLoaded', ()=>{
-  trackVisit();
   hydrateFromCache();
-  route();
-  loadData(true); // در پس‌زمینه، داده‌ی تازه را هم بگیر و کش را به‌روزرسانی کن
+  route();               // رندر فوری — بدون هیچ انتظاری برای شبکه
+  trackVisit();
+  afterInitialLoad();    // در پس‌زمینه، داده‌ی تازه را می‌گیرد و صفحه فعلی را به‌روزرسانی می‌کند
 });
 </script>
 </body>
