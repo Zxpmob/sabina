@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>در حال انتقال...</title>
+<style>
+  body{background:#221f23;color:#a99fa3;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}
+</style>
+<script>
+  // GitHub Pages برای هر مسیری که فایل واقعی برایش پیدا نکند، همین صفحه
+  // (404.html) را نشان می‌دهد. اینجا تشخیص می‌دهیم که آیا آخرین بخش مسیر
+  // درخواستی «admin» بوده (با یا بدون اسلش انتهایی) و بر همان اساس،
+  // کاربر را به صفحه اصلی سایت با هش درست هدایت می‌کنیم.
+  (function(){
+    var path = location.pathname.replace(/\/+$/, ''); // حذف اسلش(های) انتهایی
+    var parts = path.split('/');
+    var last = parts[parts.length - 1] || '';
+    var base = path.slice(0, path.length - last.length); // مسیر پایه سایت، مثلاً /sabina/
+
+    var target = base + 'index.html' + (last === 'admin' ? '#/admin' : '');
+    location.replace(target);
+  })();
+</script>
+</head>
+<body>
+  در حال انتقال...
+  <noscript><p>جاوااسکریپت غیرفعال است. <a href="index.html">برای بازگشت به سایت اینجا را بزنید</a>.</p></noscript>
+</body>
+</html>
